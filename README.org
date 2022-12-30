@@ -1,1 +1,14 @@
+#+STARTUP: content
+#+STARTUP: nohideblocks
+
 * el-clone
+** Install
+#+begin_src emacs-lisp
+  (unless (package-installed-p 'el-clone)
+    (package-vc-install "https://github.com/takeokunn/el-clone.git"))
+p#+end_src
+** Usage
+#+begin_src emacs-lisp
+  (el-clone :fetcher "github"
+            :repo "takeokunn/el-clone")
+#+end_src

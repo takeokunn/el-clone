@@ -23,11 +23,20 @@
 
 ;;; Commentary:
 
-;; Generate yasnippet templates from org document.
+;; package-vc wrapper
 
 ;;; Code:
 
-(message "Hello World!")
+(provide 'cl-lib)
+(require 'package-vc)
+
+(cl-defun el-clone (&key (fetcher "github") repo name rev backend)
+
+  (let* ((url (format "https://www.%s.com/%s" fetcher repo))
+         (iname (when name (intern name)))
+         (package-name (or iname (intern (file-name-base repo)))))
+    (unless (package-installed-p package-name)
+      (package-vc-install url iname rev backend))))
 
 (provide 'el-clone)
 
