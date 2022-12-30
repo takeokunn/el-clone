@@ -30,13 +30,11 @@
 (provide 'cl-lib)
 (require 'package-vc)
 
-(cl-defun el-clone (&key (fetcher "github") repo name rev backend)
-
-  (let* ((url (format "https://www.%s.com/%s" fetcher repo))
-         (iname (when name (intern name)))
-         (package-name (or iname (intern (file-name-base repo)))))
+(cl-defun el-clone (&key (fetcher "github") url repo name rev backend)
+  (let* ((url (or url (format "https://www.%s.com/%s.git" fetcher repo)))
+         (package-name (or name (intern (file-name-base repo)))))
     (unless (package-installed-p package-name)
-      (package-vc-install url iname rev backend))))
+      (package-vc-install url name rev backend))))
 
 (provide 'el-clone)
 
