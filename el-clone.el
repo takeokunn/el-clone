@@ -44,6 +44,7 @@
          (package-name (or name (file-name-base repo)))
          (default-directory el-clone-root))
     (unless (file-directory-p (expand-file-name package-name el-clone-root))
+        (message (concat "Install " repo-url "..."))
         (shell-command-to-string
              (mapconcat #'shell-quote-argument
                     `("git" "clone" "--depth" "1" ,repo-url ,package-name)
