@@ -1,4 +1,4 @@
-;;; el-clone.el --- package-vc wrapper -*- lexical-binding: t; -*-
+;;; el-clone.el --- just git clone  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2022  Takeo Obara
 
@@ -28,13 +28,27 @@
 ;;; Code:
 
 (provide 'cl-lib)
-(require 'package-vc)
 
-(cl-defun el-clone (&key (fetcher "github") url repo name rev backend)
-  (let* ((url (or url (format "https://www.%s.com/%s.git" fetcher repo)))
-         (package-name (or name (intern (file-name-base repo)))))
-    (unless (package-installed-p package-name)
-      (package-vc-install url name rev backend))))
+(defcustom el-clone-root (locate-user-emacs-file "el-clone")
+  "Set el-clone root directory."
+  :group 'el-clone
+  :type 'string)
+
+(cl-defun el-clone (&key (fetcher "github") url repo name)
+  ; make directory
+  (unless (file-directory-p el-clone-root)
+          (make-directory el-clone-root))
+
+  ; clone
+  (let* ((repo-url (or url (format "https://www.%s.com/%s.git" fetcher repo)))
+         (package-name (or name (file-name-base repo)))
+         (default-directory el-clone-root))
+    (unless (file-directory-p (expand-file-name package-name el-clone-root))
+        (shell-command-to-string
+             (mapconcat #'shell-quote-argument
+                    `("git" "clone" "--depth" "1" ,repo-url ,package-name)
+                    " "))
+	)))
 
 (provide 'el-clone)
 
