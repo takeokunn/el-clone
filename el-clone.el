@@ -34,22 +34,31 @@
   :group 'el-clone
   :type 'string)
 
-(cl-defun el-clone (&key (fetcher "github") url repo name)
-  ; make directory
+(cl-defun el-clone (&key (fetcher "github") url repo name load-paths)
+  ;; make directory
   (unless (file-directory-p el-clone-root)
-          (make-directory el-clone-root))
+    (make-directory el-clone-root))
 
-  ; clone
   (let* ((repo-url (or url (format "https://www.%s.com/%s.git" fetcher repo)))
          (package-name (or name (file-name-base repo)))
          (default-directory el-clone-root))
     (unless (file-directory-p (expand-file-name package-name el-clone-root))
-        (message (concat "Install " repo-url "..."))
-        (shell-command-to-string
-             (mapconcat #'shell-quote-argument
-                    `("git" "clone" "--depth" "1" ,repo-url ,package-name)
-                    " "))
-	)))
+      (message (concat "Install " repo-url "..."))
+      (shell-command-to-string
+       (mapconcat #'shell-quote-argument
+                  `("git" "clone" "--depth" "1" ,repo-url ,package-name)
+                  " ")))
+    (add-to-list 'load-path (concat el-clone-root package-name)))
+
+  ;; add path manually
+  (when load-paths
+    (dolist (path load-paths)
+      (add-to-list 'load-path path))))
+
+(defun el-clone-byte-compile ()
+  (interactive)
+  (dolist (el (concat el-clone-root "/**/*.el"))
+    (byte-compile-file el)))
 
 (provide 'el-clone)
 
