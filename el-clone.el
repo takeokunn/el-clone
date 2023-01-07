@@ -57,7 +57,7 @@
 
 (defun el-clone-byte-compile ()
   (interactive)
-  (dolist (el (concat el-clone-root "/**/*.el"))
+  (dolist (el (file-expand-wildcards (concat el-clone-root "/**/*.el")))
     (byte-compile-file el)))
 
 (provide 'el-clone)
