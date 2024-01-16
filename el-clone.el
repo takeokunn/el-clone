@@ -27,7 +27,7 @@
 
 ;;; Code:
 
-(provide 'cl-lib)
+(require 'cl-lib)
 
 (defcustom el-clone-root (locate-user-emacs-file "el-clone")
   "Set el-clone root directory."
